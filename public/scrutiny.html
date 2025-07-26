@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Paper Scrutiny</title>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .paper-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .paper-content {
+            margin-bottom: 20px;
+        }
+
+        .remarks-section {
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .approve-btn, .reject-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+        }
+
+        .approve-btn:hover {
+            background-color: #218838;
+        }
+
+        .reject-btn:hover {
+            background-color: #c82333;
+        }
+
+        .no-papers {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .close-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff3f3;
+            border-radius: 8px;
+            color: #dc3545;
+        }
+
+        .retry-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .retry-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .preview-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .preview-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Question Paper Scrutiny</h1>
+        <div id="papers-container"></div>
+    </div>
+
+    <script>
+        async function checkSession() {
+            try {
+                const response = await fetch('/check-session', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Session check failed');
+                }
+                
+                const data = await response.json();
+                if (!data.user || (data.user.role !== 'faculty' && data.user.role !== 'admin')) {
+                    window.location.href = '/index.html';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Session check error:', error);
+                window.location.href = '/index.html';
+                return false;
+            }
+        }
+
+        async function loadPapers() {
+            try {
+                const sessionValid = await checkSession();
+                if (!sessionValid) return;
+
+                const container = document.getElementById('papers-container');
+                container.innerHTML = '<div class="loading">Loading papers...</div>';
+
+                // Get paperId from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const paperId = urlParams.get('paperId');
+
+                if (paperId) {
+                    // Load specific paper
+                    const response = await fetch(`/api/questionpaper/${paperId}`, {
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.status === 401) {
+                        window.location.href = 'http://localhost:3000/index.html';
+                        return;
+                    }
+
+                    if (response.status === 403) {
+                        alert('You do not have permission to access this paper.');
+                        window.location.href = 'http://localhost:3000/faculty_dashboard.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch paper: ${response.statusText}`);
+                    }
+
+                    const paper = await response.json();
+                    
+                    // Check if the request was accepted
+                    if (paper.scrutinyRequestStatus !== 'accepted') {
+                        alert('This scrutiny request has not been accepted yet.');
+                        window.location.href = 'http://localhost:3000/faculty_dashboard.html';
+                        return;
+                    }
+
+                    // Display the paper
+                    container.innerHTML = `
+                        <div class="paper-card" data-paper-id="${paper._id}">
+                            <div class="paper-header">
+                                <h2>${paper.subjectCode} - ${paper.subjectTitle}</h2>
+                                <div>
+                                    <button onclick="previewPaper('${paper._id}')" class="preview-btn">Preview PDF</button>
+                                    <button onclick="closeScrutinyDetails('${paper._id}')" class="close-btn">Close</button>
+                                </div>
+                            </div>
+                            <div class="paper-content">
+                                <p><strong>Department:</strong> ${paper.department}</p>
+                                <p><strong>Semester:</strong> ${paper.semester}</p>
+                                <p><strong>Regulation:</strong> ${paper.regulation}</p>
+                                <p><strong>Time:</strong> ${paper.time}</p>
+                                <p><strong>Maximum Marks:</strong> ${paper.maxMarks}</p>
+                                <p><strong>Scrutinizer:</strong> ${paper.scrutinizerName || 'Not assigned'}</p>
+                                <p><strong>Status:</strong> ${paper.scrutinyStatus || 'Pending'}</p>
+                                <p><strong>Remarks:</strong> ${paper.scrutinyRemarks || 'No remarks'}</p>
+                            </div>
+                            <div class="remarks-section">
+                                <textarea id="remarks-${paper._id}" placeholder="Enter your remarks here...">${paper.scrutinyRemarks || ''}</textarea>
+                                <div class="button-group">
+                                    <button class="approve-btn" onclick="submitScrutiny('${paper._id}', 'approved')">Approve</button>
+                                    <button class="reject-btn" onclick="submitScrutiny('${paper._id}', 'rejected')">Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Load all accepted papers
+                    const response = await fetch('/api/scrutiny-papers', {
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.status === 401) {
+                        window.location.href = 'http://localhost:3000/index.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch papers: ${response.statusText}`);
+                    }
+
+                    const papers = await response.json();
+
+                    if (papers.length === 0) {
+                        container.innerHTML = '<div class="no-papers">No papers assigned for scrutiny</div>';
+                        return;
+                    }
+
+                    container.innerHTML = papers.map(paper => `
+                        <div class="paper-card" data-paper-id="${paper._id}">
+                            <div class="paper-header">
+                                <h2>${paper.subjectCode} - ${paper.subjectTitle}</h2>
+                                <div>
+                                    <button onclick="previewPaper('${paper._id}')" class="preview-btn">Preview PDF</button>
+                                    <button onclick="closeScrutinyDetails('${paper._id}')" class="close-btn">Close</button>
+                                </div>
+                            </div>
+                            <div class="paper-content">
+                                <p><strong>Department:</strong> ${paper.department}</p>
+                                <p><strong>Semester:</strong> ${paper.semester}</p>
+                                <p><strong>Regulation:</strong> ${paper.regulation}</p>
+                                <p><strong>Time:</strong> ${paper.time}</p>
+                                <p><strong>Maximum Marks:</strong> ${paper.maxMarks}</p>
+                                <p><strong>Scrutinizer:</strong> ${paper.scrutinizerName || 'Not assigned'}</p>
+                                <p><strong>Status:</strong> ${paper.scrutinyStatus || 'Pending'}</p>
+                                <p><strong>Remarks:</strong> ${paper.scrutinyRemarks || 'No remarks'}</p>
+                            </div>
+                            <div class="remarks-section">
+                                <textarea id="remarks-${paper._id}" placeholder="Enter your remarks here...">${paper.scrutinyRemarks || ''}</textarea>
+                                <div class="button-group">
+                                    <button class="approve-btn" onclick="submitScrutiny('${paper._id}', 'approved')">Approve</button>
+                                    <button class="reject-btn" onclick="submitScrutiny('${paper._id}', 'rejected')">Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading papers:', error);
+                const container = document.getElementById('papers-container');
+                container.innerHTML = `
+                    <div class="error-message">
+                        <p>Failed to load papers. Please try again.</p>
+                        <p>Error: ${error.message}</p>
+                        <button onclick="loadPapers()" class="retry-btn">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function previewPaper(paperId) {
+            try {
+                const sessionValid = await checkSession();
+                if (!sessionValid) return;
+
+                const response = await fetch(`/api/questionpaper/${paperId}/download`, {
+                    credentials: 'include',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to preview paper: ${response.statusText}`);
+                }
+
+                // Get the content type from headers
+                const contentType = response.headers.get('content-type');
+
+                // Create a blob from the response
+                const blob = await response.blob();
+                
+                // Create a URL for the blob
+                const url = window.URL.createObjectURL(blob);
+                
+                // Open the PDF in a new tab
+                window.open(url, '_blank');
+                
+                // Clean up the URL after a delay to ensure the new tab has loaded
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error previewing paper:', error);
+                alert('Failed to preview the question paper. Please try again.');
+            }
+        }
+
+        async function submitScrutiny(paperId, status) {
+            try {
+                const sessionValid = await checkSession();
+                if (!sessionValid) {
+                    alert('Session expired. Please log in again.');
+                    window.location.href = '/index.html';
+                    return;
+                }
+
+                const remarks = document.getElementById(`remarks-${paperId}`).value.trim();
+
+                if (!remarks) {
+                    alert('Please enter your remarks before submitting.');
+                    return;
+                }
+
+                if (!['approved', 'rejected'].includes(status)) {
+                    alert('Invalid status value. Please try again.');
+                    return;
+                }
+
+                const response = await fetch('/api/submit-scrutiny', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        questionPaperId: paperId,
+                        remarks,
+                        status
+                    })
+                });
+
+                if (response.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    window.location.href = '/index.html';
+                    return;
+                }
+
+                if (response.status === 403) {
+                    alert('You are not authorized to scrutinize this paper.');
+                    return;
+                }
+
+                if (response.status === 404) {
+                    alert('Question paper not found.');
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to submit scrutiny');
+                }
+
+                alert('Scrutiny submitted successfully!');
+                // Redirect to faculty dashboard after successful submission
+                window.location.href = '/faculty_dashboard.html';
+            } catch (error) {
+                console.error('Error submitting scrutiny:', error);
+                alert(`Failed to submit scrutiny: ${error.message}`);
+            }
+        }
+
+        function closeScrutinyDetails(paperId) {
+            const paperCard = document.querySelector(`.paper-card[data-paper-id="${paperId}"]`);
+            if (paperCard) {
+                paperCard.remove(); // Remove the card completely instead of just hiding it
+            }
+        }
+
+        // Load papers when the page loads
+        window.onload = loadPapers;
+    </script>
+</body>
+</html> 

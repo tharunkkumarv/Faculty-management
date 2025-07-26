@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Faculty Profile</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="faculty-container">
+    <div class="sidebar">
+      <h2>Faculty Panel</h2>
+      <ul>
+        <li onclick="navigate('dashboard')">Dashboard</li>
+        <li onclick="navigate('profile')">Profile</li>
+        <li onclick="navigate('assignments')">View Assignments</li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <h2>Faculty Profile</h2>
+      <form class="profile-form">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Name">
+
+        <label for="staffId">Staff ID</label>
+        <input type="text" id="staffId" placeholder="Staff ID">
+
+        <label for="department">Department</label>
+        <input type="text" id="department" placeholder="Department">
+
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" placeholder="Phone">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Email">
+
+        <label for="accNo">Account Number</label>
+        <input type="text" id="accNo" placeholder="Account Number">
+
+        <label for="ifsc">IFSC Code</label>
+        <input type="text" id="ifsc" placeholder="IFSC Code">
+
+        <label for="bankName">Bank Name</label>
+        <input type="text" id="bankName" placeholder="Bank Name">
+
+        <label for="micr">MICR Code</label>
+        <input type="text" id="micr" placeholder="MICR Code">
+
+        <button type="button" onclick="saveProfile()">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const username = localStorage.getItem('username');
+
+    function navigate(page) {
+      window.location.href = page + '.html';
+    }
+
+    async function fetchProfile() {
+      const res = await fetch(`/profile/${username}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      for (const key in data) {
+        if (document.getElementById(key)) {
+          document.getElementById(key).value = data[key];
+        }
+      }
+    }
+
+    async function saveProfile() {
+      const payload = {
+        username,
+        name: document.getElementById('name').value,
+        staffId: document.getElementById('staffId').value,
+        department: document.getElementById('department').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        accNo: document.getElementById('accNo').value,
+        ifsc: document.getElementById('ifsc').value,
+        bankName: document.getElementById('bankName').value,
+        micr: document.getElementById('micr').value
+      };
+
+      const res = await fetch(`/profile/${username}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+      alert(result.message);
+    }
+
+    fetchProfile();
+  </script>
+</body>
+</html>

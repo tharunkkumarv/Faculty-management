@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anna University - CEG</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWldGywAS5je80cyVtFQ7ifg5Sl82slUaE4-sQMlwNXwl53P86XBnO-LRFoqnxXA4afbI&usqp=CAU"
+          alt="Anna Univ Logo"
+          width="80"
+        />
+        <h1>ANNA UNIVERSITY - COLLEGE OF ENGINEERING GUINDY</h1>
+      </div>
+    </header>
+
+    <main>
+      <section class="login-options">
+        <div class="option" onclick="showLogin('Faculty')">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/3062/3062634.png"
+            alt="Faculty"
+          />
+          <h3>Faculty Login</h3>
+        </div>
+        <div class="option" onclick="showLogin('Admin')">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2920/2920024.png"
+            alt="Admin"
+          />
+          <h3>Admin Login</h3>
+        </div>
+      </section>
+
+      <!-- Faculty Login Popup -->
+      <div id="facultyLoginPopup" class="popup">
+        <div class="popup-content">
+          <span id="closeFacultyBtn" onclick="closeLogin()">&times;</span>
+          <h2>Faculty Login</h2>
+
+          <form id="facultyLoginForm" autocomplete="off">
+            <label>Username</label>
+            <input 
+              type="text" 
+              id="facultyUsername" 
+              name="facultyUsername"
+              placeholder="Enter Username" 
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false" />
+
+            <label>Password</label>
+            <input 
+              type="password" 
+              id="facultyPassword" 
+              name="facultyPassword"
+              placeholder="Enter Password" 
+              autocomplete="new-password"
+              autocapitalize="off"
+              spellcheck="false" />
+
+            <div class="captcha-section">
+              <span id="facNum1">0</span> + <span id="facNum2">0</span> =
+              <input type="number" id="userSum" placeholder="Enter Sum" autocomplete="off" />
+              <button type="button" class="refresh" onclick="generateFacultyNumbers()">⟳</button>
+            </div>
+
+            <div class="button-group">
+              <a href="#" class="forgot">Forgot Password?</a>
+              <div class="action-buttons">
+                <button type="button" class="signup" onclick="handleSignup()">
+                  Sign Up
+                </button>
+                <button
+                  type="button"
+                  class="login"
+                  onclick="validateFacultyLogin()"
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Admin Login Popup -->
+      <div id="adminLoginPopup" class="popup">
+        <div class="popup-content">
+          <span id="closeAdminBtn" onclick="closeAdminLogin()">&times;</span>
+          <h2>Admin Login</h2>
+
+          <form id="adminLoginForm" autocomplete="off">
+            <label>Username</label>
+            <input 
+              type="text" 
+              id="adminUsername" 
+              name="adminUsername"
+              placeholder="Enter Username" 
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false" />
+
+            <label>Password</label>
+            <input
+              type="password"
+              id="adminPassword"
+              name="adminPassword"
+              placeholder="Enter Password"
+              autocomplete="new-password"
+              autocapitalize="off"
+              spellcheck="false"
+            />
+
+            <div class="captcha-section">
+              <span id="adminNum1">0</span> + <span id="adminNum2">0</span> =
+              <input type="number" id="adminSum" placeholder="Enter Sum" autocomplete="off" />
+              <button type="button" class="refresh" onclick="generateAdminNumbers()">⟳</button>
+            </div>
+
+            <div class="button-group">
+              <a href="#" class="forgot">Forgot Password?</a>
+              <div class="action-buttons">
+                <button class="login" onclick="validateAdminLogin()">
+                  Login
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Extended Signup Popup -->
+      <div id="extraSignupPopup" class="popup">
+        <div class="popup-content" style="max-height: 90vh; overflow-y: auto">
+          <span id="closeExtraBtn" onclick="closeExtraSignup()">&times;</span>
+          <h2>Extended Signup - Faculty</h2>
+
+          <label>Full Name</label>
+          <input type="text" id="fullName" />
+
+          <!-- <label>username</label>
+          <input type="text" id="username" /> -->
+
+
+          <label>Date of Birth</label>
+          <input type="date" id="dob" />
+
+          <label>Faculty ID</label>
+          <input type="text" id="facultyId" />
+
+          <label>Permanent Address</label>
+          <textarea id="address"></textarea>
+
+          <label>Campus</label>
+          <select id="campus">
+            <option value="">-- Select Campus --</option>
+            <option value="CEG">CEG</option>
+            <option value="MIT">MIT</option>
+            <option value="ACT">ACT</option>
+            <option value="SAP">SAP</option>
+          </select>
+
+          <label>Campus Name</label>
+          <input type="text" id="campusName" />
+
+          <hr />
+          <h3>Personal Details</h3>
+
+          <label>Email</label>
+          <input type="email" id="email" />
+
+          <label>Phone Number</label>
+          <input type="text" id="phone" />
+
+          <label>Alternative Phone Number</label>
+          <input type="text" id="altPhone" />
+
+          <hr />
+          <h3>Banking Details</h3>
+
+          <label>Bank Account Number</label>
+          <input type="text" id="bankAccount" />
+
+          <label>IFSC Code</label>
+          <input type="text" id="ifsc" />
+
+          <label>MIRC Code</label>
+          <input type="text" id="mirc" />
+
+          <label>Branch Name</label>
+          <input type="text" id="branchName" />
+
+          <label>Branch Address</label>
+          <textarea id="branchAddress"></textarea>
+
+          <hr />
+          <h3>Academic Details</h3>
+
+          <label>Qualification</label>
+          <select id="qualification">
+            <option value="">-- Select Qualification --</option>
+            <option value="B.E">B.E</option>
+            <option value="M.E">M.E</option>
+          </select>
+
+          <label>Expertise In</label>
+          <input type="text" id="expertise" />
+
+          <button class="login" onclick="submitExtraDetails()">Submit</button>
+
+          <button
+            class="signup"
+            style="margin-top: 10px"
+            onclick="resetExtraDetailsForm()"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Forgot Password Popup -->
+      <div id="forgotPasswordPopup" class="popup">
+        <div class="popup-content">
+          <span class="close" onclick="closeForgotPassword()">&times;</span>
+          <h2>Forgot Password</h2>
+          <form id="forgotPasswordForm">
+            <label>Username</label>
+            <input type="text" id="forgotUsername" placeholder="Enter Username" required>
+            <button type="button" onclick="sendOTP()">Send OTP</button>
+          </form>
+          <form id="resetPasswordForm" style="display: none;">
+            <label>OTP</label>
+            <input type="text" id="otp" placeholder="Enter OTP" required>
+            <label>New Password</label>
+            <input type="password" id="newPassword" placeholder="Enter New Password" required>
+            <button type="button" onclick="resetPassword()">Reset Password</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="contact">
+        <p>Email: <a href="mailto:info@annauniv.edu">info@annauniv.edu</a></p>
+        <p>Phone: +91-44-2235-7004</p>
+      </div>
+      <div class="social">
+        <a href="#">Facebook</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Twitter</a>
+      </div>
+    </footer>
+
+    <script>
+      let facNum1 = 0,
+        facNum2 = 0;
+      let adminNum1 = 0,
+        adminNum2 = 0;
+
+      function showLogin(role) {
+        if (role === "Faculty") {
+          document.getElementById("facultyLoginPopup").style.display = "flex";
+          generateFacultyNumbers();
+        } else if (role === "Admin") {
+          document.getElementById("adminLoginPopup").style.display = "flex";
+          generateAdminNumbers();
+        }
+      }
+
+      function closeLogin() {
+        document.getElementById("facultyLoginPopup").style.display = "none";
+      }
+
+      function closeAdminLogin() {
+        document.getElementById("adminLoginPopup").style.display = "none";
+      }
+
+      function generateFacultyNumbers(event) {
+        if (event) event.preventDefault();
+        facNum1 = Math.floor(Math.random() * 100) + 1;
+        facNum2 = Math.floor(Math.random() * 100) + 1;
+        document.getElementById("facNum1").innerText = facNum1;
+        document.getElementById("facNum2").innerText = facNum2;
+        document.getElementById("userSum").value = "";
+      }
+
+      function generateAdminNumbers(event) {
+        if (event) event.preventDefault();
+        adminNum1 = Math.floor(Math.random() * 100) + 1;
+        adminNum2 = Math.floor(Math.random() * 100) + 1;
+        document.getElementById("adminNum1").innerText = adminNum1;
+        document.getElementById("adminNum2").innerText = adminNum2;
+        document.getElementById("adminSum").value = "";
+      }
+
+      async function validateFacultyLogin() {
+        const username = document.getElementById('facultyUsername').value.trim();
+        const password = document.getElementById('facultyPassword').value.trim();
+        const userSum = parseInt(document.getElementById('userSum').value);
+
+        if (userSum !== facNum1 + facNum2) {
+          alert("Captcha incorrect! Please retry.");
+          generateFacultyNumbers();
+          return;
+        }
+
+        if (!username || !password) {
+          alert("Username and password cannot be empty.");
+          return;
+        }
+
+        try {
+          console.log('Attempting login...');
+          const response = await fetch('/faculty_login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ username, password })
+          });
+
+          console.log('Login response status:', response.status);
+          const data = await response.json();
+          console.log('Login response data:', data);
+
+          if (response.ok) {
+            // Store session data in localStorage
+            localStorage.setItem('facultySession', JSON.stringify(data.user));
+            alert("Login successful!");
+            window.location.href = '/faculty_dashboard.html';
+          } else {
+            alert(data.message || "Login failed. Please check your credentials.");
+            generateFacultyNumbers();
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          alert("An error occurred during login. Please try again.");
+          generateFacultyNumbers();
+        }
+      }
+
+      async function validateAdminLogin() {
+        const username = document.getElementById("adminUsername").value.trim();
+        const password = document.getElementById("adminPassword").value.trim();
+        const adminSum = parseInt(document.getElementById("adminSum").value);
+
+        if (adminSum !== adminNum1 + adminNum2) {
+          alert("Captcha incorrect! Please retry.");
+          generateAdminNumbers();
+          return;
+        }
+
+        if (!username || !password) {
+          alert("Username and password cannot be empty.");
+          return;
+        }
+
+        const response = await fetch("/admin_login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message);
+          window.location.href = "admin_dashboard.html";
+        } else {
+          alert(data.message);
+        }
+      }
+
+      async function handleSignup() {
+        const username = document.getElementById("facultyUsername").value.trim();
+        const password = document.getElementById("facultyPassword").value.trim();
+
+        if (!username || !password) {
+          alert("Username and password cannot be empty.");
+          return;
+        }
+
+        try {
+          const response = await fetch("/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password, role: "faculty" }), // Ensure correct role is passed
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert("Signup successful! Now fill additional details.");
+            localStorage.setItem("username", username); // Store username for extra details
+            document.getElementById("facultyLoginPopup").style.display = "none";
+            document.getElementById("extraSignupPopup").style.display = "flex";
+          } else {
+            alert(data.message || "Signup failed.");
+          }
+        } catch (error) {
+          alert("An error occurred during signup.");
+          console.error("Signup Error:", error);
+        }
+      }
+
+      async function submitExtraDetails() {
+        // const username = document.getElementById("username").value.trim()
+        const fullName = document.getElementById("fullName").value.trim();
+        const dob = document.getElementById("dob").value;
+        const facultyId = document.getElementById("facultyId").value.trim(); // This is not needed on the front end
+        const address = document.getElementById("address").value.trim();
+        const campus = document.getElementById("campus").value;
+        const campusName = document.getElementById("campusName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const altPhone = document.getElementById("altPhone").value.trim();
+        const bankAccount = document.getElementById("bankAccount").value.trim();
+        const ifsc = document.getElementById("ifsc").value.trim();
+        const micr = document.getElementById("mirc").value.trim();
+        const branchName = document.getElementById("branchName").value.trim();
+        const branchAddress = document
+          .getElementById("branchAddress")
+          .value.trim();
+        const qualification = document.getElementById("qualification").value;
+        const expertise = document.getElementById("expertise").value.trim();
+
+        // Validation for empty fields
+        if (
+          // !username ||
+          !fullName ||
+          !dob ||
+          !address ||
+          !campus ||
+          !campusName ||
+          !email ||
+          !phone ||
+          !bankAccount ||
+          !ifsc ||
+          !micr ||
+          !branchName ||
+          !qualification ||
+          !expertise
+        ) {
+          alert("Please fill out all required fields.");
+          return;
+        }
+
+        // Collect the data to be sent to the server
+        const data = {
+          // username,
+          fullName,
+          dob,
+          facultyId,
+          address,
+          campus,
+          campusName,
+          email,
+          phone,
+          altPhone,
+          bankAccount,
+          ifsc,
+          micr,
+          branchName,
+          branchAddress,
+          qualification,
+          expertise,
+          username: localStorage.getItem("username"), // Assuming username is stored in localStorage
+        };
+
+        try {
+          const response = await fetch("/signup-details", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          const text = await response.text(); // Read the response as text first
+
+          if (!response.ok) {
+            console.error("Error response:", text); // Log the raw response if not OK
+            alert("Server error: " + text); // Display the error message
+            return;
+          }
+
+          let resData;
+          try {
+            resData = JSON.parse(text); // Try to parse the response as JSON
+          } catch (e) {
+            console.error("Invalid JSON response:", text); // Log invalid JSON
+            alert("Received invalid response from server.");
+            return;
+          }
+
+          alert(resData.message || "Submission failed. Please try again.");
+          if (response.ok) {
+            window.location.href = "faculty_dashboard.html"; // Redirect after successful submission
+          }
+        } catch (error) {
+          console.error("Error during submission:", error); // Log the error if request fails
+          alert("An error occurred while submitting details.");
+        }
+      }
+
+      function resetExtraDetailsForm() {
+        document.getElementById("fullName").value = "";
+        document.getElementById("dob").value = "";
+        document.getElementById("facultyId").value = "";
+        document.getElementById("address").value = "";
+        document.getElementById("campus").value = "";
+        document.getElementById("campusName").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("altPhone").value = "";
+        document.getElementById("bankAccount").value = "";
+        document.getElementById("ifsc").value = "";
+        document.getElementById("mirc").value = "";
+        document.getElementById("branchName").value = "";
+        document.getElementById("branchAddress").value = "";
+        document.getElementById("qualification").value = "";
+        document.getElementById("expertise").value = "";
+      }
+
+      function closeExtraSignup() {
+        document.getElementById("extraSignupPopup").style.display = "none";
+      }
+
+      // Forgot Password Functions
+      function showForgotPassword() {
+        document.getElementById('forgotPasswordPopup').style.display = 'flex';
+      }
+
+      function closeForgotPassword() {
+        document.getElementById('forgotPasswordPopup').style.display = 'none';
+        document.getElementById('forgotPasswordForm').style.display = 'block';
+        document.getElementById('resetPasswordForm').style.display = 'none';
+        document.getElementById('forgotUsername').value = '';
+        document.getElementById('otp').value = '';
+        document.getElementById('newPassword').value = '';
+      }
+
+      async function sendOTP() {
+        const username = document.getElementById('forgotUsername').value.trim();
+        
+        if (!username) {
+          alert('Please enter your username');
+          return;
+        }
+
+        try {
+          const response = await fetch('/forgot-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username })
+          });
+
+          const data = await response.json();
+          
+          if (response.ok) {
+            alert(data.message + '\nEmail: ' + data.email);
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+            document.getElementById('resetPasswordForm').style.display = 'block';
+          } else {
+            alert(data.message || 'Error sending OTP');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while sending OTP');
+        }
+      }
+
+      async function resetPassword() {
+        const username = document.getElementById('forgotUsername').value.trim();
+        const otp = document.getElementById('otp').value.trim();
+        const newPassword = document.getElementById('newPassword').value;
+
+        if (!otp || !newPassword) {
+          alert('Please enter OTP and new password');
+          return;
+        }
+
+        try {
+          // First get the user's facultyId
+          const userResponse = await fetch('/get-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username })
+          });
+
+          const userData = await userResponse.json();
+          
+          if (!userResponse.ok) {
+            alert(userData.message || 'Error getting user details');
+            return;
+          }
+
+          // Now send the reset password request with facultyId
+          const response = await fetch('/reset-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              facultyId: userData.facultyId, 
+              otp, 
+              newPassword 
+            })
+          });
+
+          const data = await response.json();
+          
+          if (response.ok) {
+            alert(data.message);
+            closeForgotPassword();
+          } else {
+            alert(data.message || 'Error resetting password');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while resetting password');
+        }
+      }
+
+      // Update the forgot password link click handler
+      document.querySelector('.forgot').addEventListener('click', function(e) {
+        e.preventDefault();
+        showForgotPassword();
+      });
+    </script>
+  </body>
+</html>

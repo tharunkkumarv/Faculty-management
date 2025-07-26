@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Question Paper</title>
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .download-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .download-link:hover {
+      background-color: #0056b3;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      background: #fff;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      outline: none;
+      box-sizing: border-box;
+      margin-top: 2px;
+    }
+
+    .form-group select:focus {
+      border-color: #888;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .preview-btn, .submit-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .preview-btn {
+      background-color: #28a745;
+    }
+
+    .preview-btn:hover {
+      background-color: #218838;
+    }
+
+    .submit-btn {
+      background-color: #007bff;
+    }
+
+    .submit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .status-bar {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .status-bar.success {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+
+    .preview-modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .preview-modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 800px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-height: 90%;
+      overflow-y: auto;
+    }
+
+    .close-preview {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      float: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Set Question Paper</h1>
+    </div>
+
+    <!-- Download Regulation -->
+    <a href="/files/Regulation1.pdf" class="download-link" target="_blank">Download Regulation</a>
+
+    <!-- Question Paper Form -->
+    <form id="questionPaperForm">
+      <!-- Header Information -->
+      <div class="form-group">
+        <label for="examName">Examination Name:</label>
+        <input type="text" id="examName" required readonly />
+      </div>
+      <div class="form-group">
+        <label for="department">Department:</label>
+        <input type="text" id="department" required readonly />
+      </div>
+      <div class="form-group">
+        <label for="semester">Semester:</label>
+        <input type="text" id="semester" placeholder="e.g., Semester 5" required />
+      </div>
+      <div class="form-group">
+        <label for="subjectCode">Subject Code:</label>
+        <input type="text" id="subjectCode" required readonly />
+      </div>
+      <div class="form-group">
+        <label for="subjectTitle">Subject Title:</label>
+        <input type="text" id="subjectTitle" required readonly />
+      </div>
+      <div class="form-group">
+        <label for="regulation">Regulation:</label>
+        <input type="text" id="regulation" required readonly />
+      </div>
+      <div class="form-group">
+        <label for="examDate">Exam Date:</label>
+        <input type="date" id="examDate" required />
+      </div>
+      <div class="form-group">
+        <label for="session">Session:</label>
+        <select id="session" required>
+          <option value="">Select Session</option>
+          <option value="FN">FN (Forenoon)</option>
+          <option value="AN">AN (Afternoon)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="time">Time Duration:</label>
+        <input type="text" id="time" required readonly />
+      </div>
+      <div class="form-group">
+        <label for="maxMarks">Maximum Marks:</label>
+        <input type="text" id="maxMarks" required readonly />
+      </div>
+
+      <!-- Part A -->
+      <h3>Part A (10 x 2 = 20 Marks)</h3>
+      <div id="partAQuestions">
+        <div class="form-group">
+          <label for="partA1">1.</label>
+          <input type="text" id="partA1" placeholder="Enter question 1" required />
+        </div>
+        <div class="form-group">
+          <label for="partA2">2.</label>
+          <input type="text" id="partA2" placeholder="Enter question 2" required />
+        </div>
+        <div class="form-group">
+          <label for="partA3">3.</label>
+          <input type="text" id="partA3" placeholder="Enter question 3" required />
+        </div>
+        <div class="form-group">
+          <label for="partA4">4.</label>
+          <input type="text" id="partA4" placeholder="Enter question 4" required />
+        </div>
+        <div class="form-group">
+          <label for="partA5">5.</label>
+          <input type="text" id="partA5" placeholder="Enter question 5" required />
+        </div>
+        <div class="form-group">
+          <label for="partA6">6.</label>
+          <input type="text" id="partA6" placeholder="Enter question 6" required />
+        </div>
+        <div class="form-group">
+          <label for="partA7">7.</label>
+          <input type="text" id="partA7" placeholder="Enter question 7" required />
+        </div>
+        <div class="form-group">
+          <label for="partA8">8.</label>
+          <input type="text" id="partA8" placeholder="Enter question 8" required />
+        </div>
+        <div class="form-group">
+          <label for="partA9">9.</label>
+          <input type="text" id="partA9" placeholder="Enter question 9" required />
+        </div>
+        <div class="form-group">
+          <label for="partA10">10.</label>
+          <input type="text" id="partA10" placeholder="Enter question 10" required />
+        </div>
+      </div>
+
+      <!-- Part B -->
+      <h3>Part B (8 x 8 = 64 Marks)</h3>
+      <div id="partBQuestions">
+        <div class="form-group">
+          <label for="partB1">11.</label>
+          <input type="text" id="partB1" placeholder="Enter question 11" required />
+        </div>
+        <div class="form-group">
+          <label for="partB2">12.</label>
+          <input type="text" id="partB2" placeholder="Enter question 12" required />
+        </div>
+        <div class="form-group">
+          <label for="partB3">13.</label>
+          <input type="text" id="partB3" placeholder="Enter question 13" required />
+        </div>
+        <div class="form-group">
+          <label for="partB4">14.</label>
+          <input type="text" id="partB4" placeholder="Enter question 14" required />
+        </div>
+        <div class="form-group">
+          <label for="partB5">15.</label>
+          <input type="text" id="partB5" placeholder="Enter question 15" required />
+        </div>
+        <div class="form-group">
+          <label for="partB6">16.</label>
+          <input type="text" id="partB6" placeholder="Enter question 16" required />
+        </div>
+        <div class="form-group">
+          <label for="partB7">17.</label>
+          <input type="text" id="partB7" placeholder="Enter question 17" required />
+        </div>
+        <div class="form-group">
+          <label for="partB8">18.</label>
+          <input type="text" id="partB8" placeholder="Enter question 18" required />
+        </div>
+        <div class="form-group">
+          <label for="partB9">19.</label>
+          <input type="text" id="partB9" placeholder="Enter question 19" required />
+        </div>
+        <div class="form-group">
+          <label for="partB10">20.</label>
+          <input type="text" id="partB10" placeholder="Enter question 20" required />
+        </div>
+        <div class="form-group">
+          <label for="partB11">21.</label>
+          <input type="text" id="partB11" placeholder="Enter question 21" required />
+        </div>
+        <div class="form-group">
+          <label for="partB12">22.</label>
+          <input type="text" id="partB12" placeholder="Enter question 22" required />
+        </div>
+      </div>
+
+      <!-- Part C -->
+      <h3>Part C (2 x 8 = 16 Marks)</h3>
+      <div id="partCQuestions">
+        <div class="form-group">
+          <label for="partC1">23.</label>
+          <input type="text" id="partC1" placeholder="Enter question 23" required />
+        </div>
+        <div class="form-group">
+          <label for="partC2">24.</label>
+          <input type="text" id="partC2" placeholder="Enter question 24" required />
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="button-group">
+        <button type="button" class="preview-btn" onclick="previewQuestionPaper()">Preview</button>
+        <button type="button" class="submit-btn" onclick="submitQuestionPaper()">Submit</button>
+      </div>
+    </form>
+
+    <!-- Status Bar -->
+    <div id="statusBar" class="status-bar" style="display: none;">
+      Status: <span id="statusMessage">Pending</span>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="preview-modal">
+      <div class="preview-modal-content">
+        <button class="close-preview" onclick="closePreview()">Close</button>
+        <div id="previewContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let facultyId = null;
+    let role = null;
+    // Fetch facultyId from session on page load
+    window.onload = async function() {
+      try {
+        const res = await fetch('/check-session', { credentials: 'include' });
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.user || !data.user.facultyId) {
+            window.location.href = '/index.html';
+            return;
+          }
+          facultyId = data.user.facultyId;
+        } else {
+          window.location.href = '/index.html';
+          return;
+        }
+        // Get role and subjectCode from URL
+        const params = new URLSearchParams(window.location.search);
+        role = params.get('role');
+        const subjectCodeFromUrl = params.get('subjectCode');
+        document.getElementById('subjectCode').value = subjectCodeFromUrl;
+        document.getElementById('subjectCode').readOnly = true;
+        // Autofill and lock other fields
+        document.getElementById('examName').value = 'End Semester examination';
+        document.getElementById('examName').readOnly = true;
+        document.getElementById('department').value = 'Computer Science and Engineering';
+        document.getElementById('department').readOnly = true;
+        document.getElementById('regulation').value = 'R1';
+        document.getElementById('regulation').readOnly = true;
+        document.getElementById('maxMarks').value = '100';
+        document.getElementById('maxMarks').readOnly = true;
+        document.getElementById('time').value = '3 Hours';
+        document.getElementById('time').readOnly = true;
+        // Autofill subject title based on subject code
+        const subjectTitles = {
+          'CS8651': 'Internet Programming',
+          'CS8691': 'Artificial Intelligence',
+          'CS8601': 'Mobile Computing',
+          'CS8602': 'Compiler Design',
+          'CS8603': 'Distributed Systems'
+        };
+        document.getElementById('subjectTitle').value = subjectTitles[subjectCodeFromUrl] || '';
+        document.getElementById('subjectTitle').readOnly = true;
+      } catch (e) {
+        facultyId = null;
+        window.location.href = '/index.html';
+      }
+    };
+
+    function previewQuestionPaper() {
+      const examName = document.getElementById('examName').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const semester = document.getElementById('semester').value.trim();
+      const subjectCode = document.getElementById('subjectCode').value.trim();
+      const subjectTitle = document.getElementById('subjectTitle').value.trim();
+      const regulation = document.getElementById('regulation').value.trim();
+      const time = document.getElementById('time').value.trim();
+      const maxMarks = document.getElementById('maxMarks').value.trim();
+
+      const partAQuestions = Array.from(document.querySelectorAll('#partAQuestions .form-group input[type="text"]')).map(input => input.value.trim());
+      const partBQuestions = Array.from(document.querySelectorAll('#partBQuestions .form-group input[type="text"]')).map(input => input.value.trim());
+      const partCQuestions = Array.from(document.querySelectorAll('#partCQuestions .form-group input[type="text"]')).map(input => input.value.trim());
+
+      if (!examName || !department || !semester || !subjectCode || !subjectTitle || !regulation || !time || !maxMarks) {
+        alert('Please fill in all the header fields before previewing.');
+        return;
+      }
+
+      const previewContent = `
+        <h2>${examName}</h2>
+        <p><strong>Department:</strong> ${department}</p>
+        <p><strong>Semester:</strong> ${semester}</p>
+        <p><strong>Subject Code & Title:</strong> ${subjectCode} - ${subjectTitle}</p>
+        <p><strong>Regulation:</strong> ${regulation}</p>
+        <p><strong>Time:</strong> ${time}</p>
+        <p><strong>Maximum Marks:</strong> ${maxMarks}</p>
+
+        <h3>Part A (10 x 2 = 20 Marks)</h3>
+        <ol>${partAQuestions.map(q => `<li>${q}</li>`).join('')}</ol>
+
+        <h3>Part B (8 x 8 = 64 Marks)</h3>
+        <ol>${partBQuestions.map(q => `<li>${q}</li>`).join('')}</ol>
+
+        <h3>Part C (2 x 8 = 16 Marks)</h3>
+        <ol>${partCQuestions.map(q => `<li>${q}</li>`).join('')}</ol>
+      `;
+
+      document.getElementById('previewContent').innerHTML = previewContent;
+      document.getElementById('previewModal').style.display = 'flex';
+    }
+
+    function closePreview() {
+      document.getElementById('previewModal').style.display = 'none';
+    }
+
+    async function submitQuestionPaper() {
+      if (!facultyId) {
+        alert('Session expired or faculty ID not found. Please log in again.');
+        return;
+      }
+      const examName = document.getElementById('examName').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const semester = document.getElementById('semester').value.trim();
+      const subjectCode = document.getElementById('subjectCode').value.trim();
+      const subjectTitle = document.getElementById('subjectTitle').value.trim();
+      const regulation = document.getElementById('regulation').value.trim();
+      const time = document.getElementById('time').value.trim();
+      const maxMarks = document.getElementById('maxMarks').value.trim();
+      const examDate = document.getElementById('examDate').value;
+      const sessionVal = document.getElementById('session').value;
+
+      const partAQuestions = Array.from(document.querySelectorAll('#partAQuestions .form-group input[type="text"]')).map(input => input.value.trim());
+      const partBQuestions = Array.from(document.querySelectorAll('#partBQuestions .form-group input[type="text"]')).map(input => input.value.trim());
+      const partCQuestions = Array.from(document.querySelectorAll('#partCQuestions .form-group input[type="text"]')).map(input => input.value.trim());
+
+      if (!examName || !department || !semester || !subjectCode || !subjectTitle || !regulation || !time || !maxMarks || !examDate || !sessionVal) {
+        alert('Please fill in all the fields before submitting.');
+        return;
+      }
+
+      // Fetch the deadline date for this assignment from the backend
+      let deadlineDate = null;
+      try {
+        const res = await fetch(`/api/faculty-assignments`, { credentials: 'include' });
+        if (res.ok) {
+          const assignments = await res.json();
+          const assignment = assignments.find(a => a.facultyId === facultyId && a.subjectCode === subjectCode);
+          if (assignment && assignment.deadlineDate) {
+            deadlineDate = new Date(assignment.deadlineDate);
+          }
+        }
+      } catch (e) { /* ignore */ }
+
+      if (deadlineDate) {
+        const examDateObj = new Date(examDate);
+        if (examDateObj <= deadlineDate) {
+          alert('Exam date must be after the deadline date for question paper submission.');
+          return;
+        }
+      }
+
+      const questionPaperData = {
+        facultyId,
+        examName,
+        department,
+        semester,
+        subjectCode,
+        subjectTitle,
+        regulation,
+        time,
+        maxMarks,
+        partAQuestions,
+        partBQuestions,
+        partCQuestions,
+        role: (role || 'Paper Setter').trim(),
+        session: sessionVal,
+        examDate
+      };
+
+      try {
+        const response = await fetch('/api/questionpaper', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(questionPaperData)
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert('Question paper submitted successfully!');
+          window.location.href = 'faculty_dashboard.html';
+        } else {
+          alert(`Error: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Error submitting question paper:', error);
+        alert('An error occurred while submitting the question paper.');
+      }
+    }
+
+    document.getElementById('questionPaperForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/submit-question-paper', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text(); // Log the raw response for debugging
+          console.error('Error response:', errorText);
+          alert(`Error: ${response.status} - ${response.statusText}`);
+          return;
+        }
+
+        const result = await response.json();
+        alert('Question paper submitted successfully!');
+        event.target.reset();
+      } catch (err) {
+        console.error('Error submitting question paper:', err);
+        alert('An error occurred while submitting the question paper.');
+      }
+    });
+  </script>
+</body>
+</html>

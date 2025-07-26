@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - College of Engineering Guindy</title>
+    <style>
+      /* Your Existing CSS (no change needed) */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+        display: flex;
+        height: 100vh;
+      }
+
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        background-color: #0f83ff;
+        color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 20px;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+      }
+
+      .sidebar.collapsed {
+        width: 50px;
+        padding: 20px;
+        color: transparent;
+        overflow: hidden;
+      }
+
+      .sidebar.collapsed ul,
+      .sidebar.collapsed h2 {
+        display: none;
+      }
+
+      .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .sidebar ul li {
+        margin: 20px 0;
+      }
+
+      .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        display: block;
+      }
+
+      .sidebar ul li a.active {
+        font-weight: bold;
+      }
+
+      .content-wrapper {
+        margin-left: 250px;
+        padding: 20px;
+        transition: margin-left 0.3s ease;
+        width: 100%;
+        max-width: 1200px;
+        margin-right: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .content-wrapper.collapsed {
+        margin-left: 50px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .content {
+        width: 100%;
+        max-width: 1200px;
+        text-align: center;
+      }
+
+      .content h1 {
+        font-size: 32px;
+        margin-bottom: 20px;
+      }
+
+      .feature-card,
+      .admin-info-card {
+        background-color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .hidden-section {
+        display: none;
+      }
+
+      .toggle-sidebar-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background-color: #0f83ff;
+        padding: 10px;
+        border-radius: 50%;
+      }
+
+      .question-paper-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      .question-paper-table th,
+      .question-paper-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        word-wrap: break-word;
+        min-width: 100px;
+        vertical-align: middle;
+      }
+
+      .question-paper-table th {
+        background-color: #0f83ff;
+        color: white;
+        position: sticky;
+        top: 0;
+      }
+
+      .download-btn {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .download-btn:hover {
+        background-color: #218838;
+      }
+
+      .assign-scrutinizer-btn {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .assign-scrutinizer-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .view-scrutiny-btn {
+        background-color: #17a2b8;
+        color: white;
+      }
+
+      .view-scrutiny-btn:hover {
+        background-color: #138496;
+      }
+
+      .download-btn,
+      .assign-scrutinizer-btn,
+      .view-scrutiny-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        white-space: nowrap;
+        min-width: 120px;
+        text-align: center;
+        margin: 0;
+      }
+
+      .action-buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+        min-height: 120px;
+        box-sizing: border-box;
+      }
+
+      #add-faculty-button {
+        margin-top: 15px;
+        background-color: #0f83ff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin: 2px 0;
+        display: block;
+      }
+
+      .input-field:focus {
+        border-color: #0f83ff;
+        outline: none;
+      }
+
+      select.input-field {
+        background-color: white;
+      }
+
+      .save-button,
+      .cancel-button {
+        margin: 5px;
+        padding: 8px 12px;
+        background-color: #0f83ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .save-button:disabled,
+      .cancel-button:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+      }
+
+      .logout-link {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: red;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .logout-link:hover {
+        background-color: darkred;
+      }
+
+      .remove-button {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .remove-button:hover {
+        background-color: darkred;
+      }
+
+      .pay-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .pay-button:hover {
+        background-color: #45a049;
+      }
+
+      .pay-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      #faculty-table-body {
+        display: table-row-group;
+      }
+
+      #faculty-table-body tr {
+        display: table-row;
+      }
+
+      #faculty-table-body td {
+        display: table-cell;
+        position: relative;
+      }
+
+      .input-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .set-question-paper-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .set-question-paper-button:hover {
+        background-color: #45a049;
+      }
+
+      .set-question-paper-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        border-radius: 8px;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .close-btn:hover {
+        color: #000;
+      }
+
+      .modal-body {
+        padding: 10px 0;
+      }
+
+      .question-paper-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        word-wrap: break-word;
+        min-width: 100px;
+        vertical-align: middle;
+        max-width: 200px;
+        overflow: hidden;
+      }
+
+      .approval-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .approval-table th,
+      .approval-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .approval-table th {
+        background-color: #0f83ff;
+        color: white;
+        position: sticky;
+        top: 0;
+      }
+
+      .approval-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .approval-table tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      .approval-status {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .status-pending {
+        background-color: #ffc107;
+        color: #000;
+      }
+
+      .status-approved {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .status-rejected {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .approval-actions {
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .approve-btn,
+      .reject-btn,
+      .view-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        min-width: 100px;
+        display: inline-block;
+      }
+
+      .approve-btn {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .reject-btn {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .view-btn {
+        background-color: #17a2b8;
+        color: white;
+      }
+
+      .approve-btn:hover {
+        background-color: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .reject-btn:hover {
+        background-color: #c82333;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .view-btn:hover {
+        background-color: #138496;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .approval-label-approved {
+        color: #28a745;
+        font-weight: 500;
+        background: #e8f5e9;
+        padding: 6px 12px;
+        border-radius: 4px;
+        display: inline-block;
+        min-width: 100px;
+      }
+
+      .approval-label-rejected {
+        color: #dc3545;
+        font-weight: 500;
+        background: #ffebee;
+        padding: 6px 12px;
+        border-radius: 4px;
+        display: inline-block;
+        min-width: 100px;
+      }
+
+      .paper-details {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+
+      .paper-details p {
+        margin: 5px 0;
+      }
+
+      .paper-content {
+        padding: 15px;
+      }
+
+      .paper-content h3 {
+        color: #0f83ff;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+
+      .paper-content div {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <h2>Admin Panel</h2>
+      <ul>
+        <li>
+          <a
+            href="#question-paper-assigner-content"
+            onclick="showSection('question-paper-assigner-content', this)"
+            >Question Paper Assigner</a
+          >
+        </li>
+        <li>
+          <a
+            href="#question-papers-content"
+            onclick="showSection('question-papers-content', this)"
+            >Question Papers</a
+          >
+        </li>
+        <li>
+          <a
+            href="#approval-content"
+            onclick="showSection('approval-content', this)"
+            >Approval</a
+          >
+        </li>
+        <li>
+          <a
+            href="#payments-content"
+            onclick="showSection('payments-content', this)"
+            >Payments</a
+          >
+        </li>
+        <li>
+          <a
+            href="#admin-info-content"
+            onclick="showSection('admin-info-content', this)"
+            >Admin Info</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <a href="#" onclick="logout()" class="logout-link">Logout</a>
+
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <h1>Admin Dashboard</h1>
+
+        <div
+          id="question-paper-assigner-content"
+          class="feature-card"
+          style="margin-left: 30px"
+        >
+          <h3>Question Paper Assigner</h3>
+          <p>
+            Manage faculty assignments for question paper setting and scrutiny.
+          </p>
+          <table class="question-paper-table">
+            <thead>
+              <tr>
+                <th>Serial No</th>
+                <th>Faculty ID</th>
+                <th>Faculty Name</th>
+                <th>Subject</th>
+                <th>Regulation</th>
+                <th>Role</th>
+                <th>Deadline Date</th>
+                <th>Actions</th>
+                <th>Response</th>
+                <th>Question Paper Status</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-table-body"></tbody>
+          </table>
+          <button id="add-faculty-button" onclick="addRow()">
+            Add New Faculty
+          </button>
+        </div>
+
+        <div
+          id="question-papers-content"
+          class="feature-card hidden-section"
+          style="margin-left: 30px"
+        >
+          <h3>Submitted Question Papers</h3>
+          <table class="question-paper-table">
+            <thead>
+              <tr>
+                <th>Serial No</th>
+                <th>Subject Code</th>
+                <th>Subject Title</th>
+                <th>Faculty ID</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="question-papers-body"></tbody>
+          </table>
+        </div>
+
+        <div
+          id="approval-content"
+          class="feature-card hidden-section"
+          style="margin-left: 30px"
+        >
+          <h3>Question Paper Approval</h3>
+          <p>Approve question papers that have been accepted by scrutiny.</p>
+          <table class="approval-table">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Date of Exam</th>
+                <th>Session</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Print Question Paper</th>
+                <th>Question Paper</th>
+                <th>Approval</th>
+              </tr>
+            </thead>
+            <tbody id="approval-table-body">
+              <!-- Approval entries will be populated here -->
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          id="payments-content"
+          class="feature-card hidden-section"
+          style="margin-left: 30px"
+        >
+          <h3>Payments</h3>
+          <p>Manage payments for paper setters and scrutiny checkers.</p>
+          
+          <h4>Paper Setters</h4>
+          <table class="question-paper-table">
+            <thead>
+              <tr>
+                <th>Serial No</th>
+                <th>Faculty ID</th>
+                <th>Faculty Name</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="paper-setters-payment-body"></tbody>
+          </table>
+          
+          <h4 style="margin-top: 30px;">Scrutiny Checkers</h4>
+          <table class="question-paper-table">
+            <thead>
+              <tr>
+                <th>Serial No</th>
+                <th>Faculty ID</th>
+                <th>Faculty Name</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="scrutiny-checkers-payment-body"></tbody>
+          </table>
+        </div>
+
+        <div
+          id="admin-info-content"
+          class="admin-info-card hidden-section"
+          style="margin-left: 30px"
+        >
+          <h3>Admin Info</h3>
+          <p>Admin-related information goes here.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const facultyTableBody = document.getElementById("faculty-table-body");
+
+      let refreshInterval = null;
+      let isInputActive = false;
+
+      function toggleSidebar() {
+        document.querySelector(".sidebar").classList.toggle("collapsed");
+        document
+          .querySelector(".content-wrapper")
+          .classList.toggle("collapsed");
+      }
+
+      function confirmLogout() {
+        if (confirm("Do you want to logout?")) {
+          window.location.href = "index.html";
+        }
+      }
+
+      function showSection(sectionId, clickedLink) {
+        document
+          .querySelectorAll(".feature-card, .admin-info-card")
+          .forEach((section) => {
+            section.classList.add("hidden-section");
+          });
+        document.getElementById(sectionId).classList.remove("hidden-section");
+        document
+          .querySelectorAll(".sidebar a")
+          .forEach((link) => link.classList.remove("active"));
+        clickedLink.classList.add("active");
+        
+        // Load payment data when payments section is shown
+        if (sectionId === 'payments-content') {
+          loadPaymentData();
+        }
+      }
+
+      function enableSaveButton(row) {
+        const inputs = row.querySelectorAll('input[required], select[required]');
+        const saveButton = row.querySelector('.save-button');
+        const isValid = Array.from(inputs).every(input => input.value.trim() !== '');
+        saveButton.disabled = !isValid;
+      }
+
+      // Add subject mapping
+      const subjects = {
+        'CS8651': 'Internet Programming',
+        'CS8691': 'Artificial Intelligence',
+        'CS8601': 'Mobile Computing',
+        'CS8602': 'Compiler Design',
+        'CS8603': 'Distributed Systems'
+      };
+
+      function addRow() {
+        stopPeriodicRefresh();
+        isInputActive = true;
+        
+        // Clear any error messages or "No assignments found" message
+        if (facultyTableBody.innerHTML.includes('colspan="8"')) {
+            facultyTableBody.innerHTML = '';
+        }
+        
+        const newRow = facultyTableBody.insertRow(0);
+        newRow.innerHTML = `
+            <td>1</td>
+            <td><div class="input-container"><input class="input-field" type="text" placeholder="Faculty ID" oninput="enableSaveButton(this.closest('tr'))" required></div></td>
+            <td><div class="input-container"><input class="input-field" type="text" placeholder="Faculty Name" oninput="enableSaveButton(this.closest('tr'))" required></div></td>
+            <td>
+                <div class="input-container">
+                    <select class="input-field" onchange="enableSaveButton(this.closest('tr'))" required>
+                        <option value="">Select Subject</option>
+                        ${Object.entries(subjects).map(([code, name]) => 
+                            `<option value="${code}">${code} - ${name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="input-container">
+                    <select class="input-field" onchange="enableSaveButton(this.closest('tr'))" required>
+                        <option value="">Select Regulation</option>
+                        <option value="R1">R1</option>
+                        <option value="R2">R2</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="input-container">
+                    <input type="text" class="input-field" value="Paper Setter" readonly>
+                </div>
+            </td>
+            <td>
+                <div class="input-container">
+                    <input type="date" class="input-field" onchange="enableSaveButton(this.closest('tr'))" required>
+                </div>
+            </td>
+            <td>
+                <button class="save-button" onclick="saveFacultyRow(this.closest('tr'))" disabled>Save</button>
+                <button class="cancel-button" onclick="cancelRow(this.closest('tr'))">Cancel</button>
+            </td>
+            <td>Pending</td>
+        `;
+        updateRowNumbers();
+      }
+
+      function updateRowNumbers() {
+        const rows = Array.from(facultyTableBody.getElementsByTagName('tr'));
+        const validRows = rows.filter(row => !row.innerHTML.includes('colspan="8"'));
+        validRows.forEach((row, index) => {
+            const firstCell = row.cells[0];
+            if (firstCell) {
+                firstCell.textContent = index + 1;
+            }
+        });
+      }
+
+      function cancelRow(row) {
+        isInputActive = false;
+        row.remove();
+        updateRowNumbers();
+        
+        // Check if table is empty and show message if needed
+        if (facultyTableBody.children.length === 0) {
+            facultyTableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center;">No assignments found</td>
+                </tr>
+            `;
+        }
+        
+        startPeriodicRefresh();
+      }
+
+      async function checkSession() {
+        try {
+          const response = await fetch("/check-session", {
+            credentials: "include"
+          });
+          const data = await response.json();
+          
+          if (!data.user) {
+            if (data.message === "No active session") {
+              window.location.href = "index.html";
+            }
+            return false;
+          }
+          return true;
+        } catch (error) {
+          console.error("Session check error:", error);
+          return false;
+        }
+      }
+
+      async function fetchAllFacultyAssignments() {
+        if (isInputActive) return;
+
+        try {
+            const response = await fetch("/api/faculty-assignments", {
+                credentials: "include"
+            });
+            
+            if (!response.ok) {
+                throw new Error("Failed to fetch assignments");
+            }
+
+            const data = await response.json();
+            
+            if (!isInputActive) {
+                facultyTableBody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    facultyTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center;">No assignments found</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                const sortedData = data.sort((a, b) => {
+                    if (a.createdAt && b.createdAt) {
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    }
+                    return 0;
+                });
+
+                sortedData.forEach((assignment, index) => {
+                    const newRow = facultyTableBody.insertRow();
+                    newRow.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${assignment.facultyId || 'N/A'}</td>
+                        <td>${assignment.facultyName || 'N/A'}</td>
+                        <td>${assignment.subjectCode} - ${assignment.subjectName || 'N/A'}</td>
+                        <td>${assignment.regulation || 'N/A'}</td>
+                        <td>${assignment.role || 'N/A'}</td>
+                        <td>${assignment.deadlineDate ? new Date(assignment.deadlineDate).toISOString().split('T')[0] : 'N/A'}</td>
+                        <td>
+                            <button class="remove-button" onclick="removeFaculty('${assignment.facultyId}', '${assignment.subjectCode}', '${assignment.role}', this)">Remove</button>
+                        </td>
+                        <td>${assignment.response === 'completed' ? 'Completed' : (assignment.response ? (assignment.response === 'yes' ? 'Accepted' : 'Declined') : 'Pending')}</td>
+                        <td>${assignment.questionPaperStatus === 'submitted' ? 'Submitted' : (assignment.questionPaperStatus || 'Yet to submit')}</td>
+                    `;
+                });
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            if (!isInputActive) {
+                facultyTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center;">Error loading assignments</td>
+                    </tr>
+                `;
+            }
+        }
+      }
+
+      // Function to start periodic refresh
+      function startPeriodicRefresh() {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+        }
+        refreshInterval = setInterval(fetchAllFacultyAssignments, 300000);
+      }
+
+      // Function to stop periodic refresh
+      function stopPeriodicRefresh() {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+            refreshInterval = null;
+        }
+      }
+
+      // Initialize the page
+      window.onload = async function() {
+        await fetchAllFacultyAssignments();
+        await loadQuestionPapers();
+        await loadApprovals();
+        startPeriodicRefresh();
+      };
+
+      // Cleanup on page unload
+      window.onbeforeunload = function() {
+        stopPeriodicRefresh();
+      };
+
+      // Function to remove faculty assignment
+      async function removeFaculty(facultyId, subjectCode, role, button) {
+        if (!confirm("Are you sure you want to remove this assignment?")) return;
+
+        try {
+            const response = await fetch("/remove-faculty-assignment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ facultyId, subjectCode, role })
+            });
+
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to remove assignment");
+            }
+
+            alert(result.message || "Assignment removed successfully");
+            await fetchAllFacultyAssignments();
+            await loadQuestionPapers();
+
+        } catch (error) {
+            console.error("Remove error:", error);
+            alert(error.message || "Failed to remove assignment");
+        }
+      }
+
+      // Function to save faculty row
+      async function saveFacultyRow(row) {
+        const saveButton = row.querySelector('.save-button');
+        const cancelButton = row.querySelector('.cancel-button');
+        saveButton.disabled = true;
+        cancelButton.disabled = true;
+
+        try {
+            const subjectSelect = row.querySelector('select');
+            const selectedSubject = subjectSelect.value;
+            
+            const data = {
+                facultyId: row.querySelector('input[placeholder="Faculty ID"]').value.trim(),
+                facultyName: row.querySelector('input[placeholder="Faculty Name"]').value.trim(),
+                subjectCode: selectedSubject,
+                subjectName: subjects[selectedSubject],
+                regulation: row.querySelectorAll('select')[1].value.trim(),
+                role: row.querySelector('input[value="Paper Setter"]').value,
+                deadlineDate: row.querySelector('input[type="date"]').value
+            };
+
+            const response = await fetch("/save-faculty-assignment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.message || "Error saving assignment");
+            }
+
+            alert(result.message || "Faculty assignment saved successfully");
+            isInputActive = false;
+            await fetchAllFacultyAssignments();
+            await loadQuestionPapers();
+
+        } catch (error) {
+            console.error("Save error:", error);
+            alert(error.message || "Failed to save. Please try again.");
+            saveButton.disabled = false;
+            cancelButton.disabled = false;
+        }
+      }
+
+      async function loadQuestionPapers() {
+        try {
+            const response = await fetch('/api/questionpapers', {
+                credentials: 'include'
+            });
+
+            if (response.status === 401) {
+                // Session expired or not authenticated
+                window.location.href = '/index.html';
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch question papers');
+            }
+
+            const papers = await response.json();
+            const tbody = document.getElementById('question-papers-body');
+            tbody.innerHTML = '';
+
+            if (papers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No question papers submitted yet</td></tr>';
+                return;
+            }
+
+            papers.forEach((paper, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${paper.subjectCode}</td>
+                    <td>${paper.subjectTitle}</td>
+                    <td>${paper.facultyId || 'N/A'}</td>
+                    <td>${paper.scrutinyStatus}</td>
+                    <td>
+                        <div class="action-buttons-container">
+                            <button onclick="downloadPaper('${paper._id}')" class="download-btn">Download</button>
+                            ${paper.scrutinyStatus === 'pending' && !paper.scrutinizerId ? 
+                                `<button onclick="showAssignScrutinizerModal('${paper._id}')" class="assign-scrutinizer-btn">Assign Scrutinizer</button>` : 
+                                `<button onclick="viewScrutiny('${paper._id}')" class="view-scrutiny-btn">View Scrutiny</button>`
+                            }
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Load payment data
+            loadPaymentData();
+        } catch (error) {
+            console.error('Error loading question papers:', error);
+            const tbody = document.getElementById('question-papers-body');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Failed to load question papers. Please try again later.</td></tr>';
+        }
+      }
+      
+      // Function to load payment data for paper setters and scrutiny checkers
+      async function loadPaymentData() {
+        try {
+            const assignmentsResponse = await fetch('/api/faculty-assignments', {
+                credentials: 'include'
+            });
+            const assignments = await assignmentsResponse.json();
+            
+            // Load paper setters data
+            const paperSettersBody = document.getElementById('paper-setters-payment-body');
+            paperSettersBody.innerHTML = '';
+            
+            // Load scrutiny checkers data
+            const scrutinyCheckersBody = document.getElementById('scrutiny-checkers-payment-body');
+            scrutinyCheckersBody.innerHTML = '';
+            
+            // Fetch question papers to get both paper setters and scrutiny checkers
+            const papersResponse = await fetch('/api/questionpapers', {
+                credentials: 'include'
+            });
+            
+            if (!papersResponse.ok) {
+                throw new Error('Failed to fetch question papers');
+            }
+            
+            const papers = await papersResponse.json();
+            
+            // Filter papers that have been approved by admin
+            const approvedPapers = papers.filter(paper => paper.adminApproval === 'accepted');
+            
+            // Display paper setters for approved papers
+            if (approvedPapers.length === 0) {
+                paperSettersBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No approved papers found</td></tr>';
+                scrutinyCheckersBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No approved papers found</td></tr>';
+            } else {
+                // Display paper setters
+                approvedPapers.forEach((paper, index) => {
+                    const facultyAssignment = assignments.find(a => 
+                        a.subjectCode === paper.subjectCode && 
+                        (a.facultyId === paper.facultyId || a.facultyId === paper.paperSetterId) &&
+                        a.role === 'Paper Setter'
+                    );
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${paper.paperSetterId || paper.facultyId || 'N/A'}</td>
+                        <td>${facultyAssignment ? facultyAssignment.facultyName : (paper.paperSetterName || paper.facultyName || 'N/A')}</td>
+                        <td>${paper.subjectCode} - ${paper.subjectTitle || 'N/A'}</td>
+                        <td>Pending Payment</td>
+                        <td>
+                            <button class="pay-button" onclick="processPayment('${paper.paperSetterId || paper.facultyId}', '${paper.subjectCode}', 'paper_setter')">Pay</button>
+                        </td>
+                    `;
+                    paperSettersBody.appendChild(row);
+                });
+
+                // Display scrutiny checkers for approved papers that have completed scrutiny
+                const completedScrutinyPapers = approvedPapers.filter(paper => 
+                    paper.scrutinyStatus === 'approved' || paper.scrutinyStatus === 'rejected'
+                );
+
+                if (completedScrutinyPapers.length === 0) {
+                    scrutinyCheckersBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No completed scrutiny papers found</td></tr>';
+                } else {
+                    completedScrutinyPapers.forEach((paper, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${paper.scrutinizerId || 'N/A'}</td>
+                            <td>${paper.scrutinizerName || 'N/A'}</td>
+                            <td>${paper.subjectCode} - ${paper.subjectTitle || 'N/A'}</td>
+                            <td>Pending Payment</td>
+                            <td>
+                                <button class="pay-button" onclick="processPayment('${paper.scrutinizerId}', '${paper.subjectCode}', 'scrutiny_checker')">Pay</button>
+                            </td>
+                        `;
+                        scrutinyCheckersBody.appendChild(row);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error loading payment data:', error);
+            alert('Failed to load payment data. Please try again.');
+        }
+      }
+      
+      // Function to process payment
+      async function processPayment(facultyId, subjectCode, type) {
+        if (!facultyId || !subjectCode || !type) {
+            alert('Missing information for payment processing');
+            return;
+        }
+        
+        const facultyType = type === 'paper_setter' ? 'Paper Setter' : 'Scrutiny Checker';
+        
+        if (confirm(`Are you sure you want to process payment for ${facultyType} (ID: ${facultyId}) for subject ${subjectCode}?`)) {
+            try {
+                // Verify that the paper is approved before processing payment
+                const papersResponse = await fetch('/api/questionpapers', {
+                    credentials: 'include'
+                });
+                
+                if (!papersResponse.ok) {
+                    throw new Error('Failed to verify paper approval status');
+                }
+                
+                const papers = await papersResponse.json();
+                const paper = papers.find(p => p.subjectCode === subjectCode && 
+                    (type === 'paper_setter' ? p.facultyId === facultyId : p.scrutinizerId === facultyId));
+                
+                if (!paper) {
+                    throw new Error('Question paper not found');
+                }
+                
+                if (paper.adminApproval !== 'accepted') {
+                    throw new Error('Cannot process payment. Question paper has not been approved by admin.');
+                }
+                
+                alert('Payment is being processed...');
+                
+                // Simulate payment processing
+                setTimeout(() => {
+                    alert(`Payment processed successfully for ${facultyType} (ID: ${facultyId}) for subject ${subjectCode}`);
+                    
+                    // Update the status in the table
+                    const tableBody = type === 'paper_setter' ? 
+                        document.getElementById('paper-setters-payment-body') : 
+                        document.getElementById('scrutiny-checkers-payment-body');
+                    
+                    const rows = tableBody.getElementsByTagName('tr');
+                    for (let i = 0; i < rows.length; i++) {
+                        const cells = rows[i].getElementsByTagName('td');
+                        if (cells[1].textContent === facultyId && cells[3].textContent.includes(subjectCode)) {
+                            cells[4].textContent = 'Paid';
+                            cells[5].innerHTML = '<span style="color: green;">Paid</span>';
+                            break;
+                        }
+                    }
+                }, 1500);
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                alert(error.message || 'Failed to process payment. Please try again.');
+            }
+        }
+      }
+
+      async function showAssignScrutinizerModal(paperId) {
+        try {
+            // First fetch the question paper details
+            const response = await fetch(`/api/questionpaper/${paperId}`, { 
+                credentials: 'include' 
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch question paper details');
+            }
+            
+            const paper = await response.json();
+            
+            if (!paper.examDate) {
+                alert('Exam date not found for this question paper');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'assign-scrutinizer-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+
+            // Store exam date in modal dataset
+            modal.dataset.paperId = paperId;
+            modal.dataset.examDate = paper.examDate;
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px; width: 400px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">Assign Scrutinizer</h3>
+                        <button onclick="closeAssignScrutinizerModal()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Scrutinizer ID:</label>
+                        <input type="text" id="scrutinizerId" class="input-field" required>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Scrutinizer Name:</label>
+                        <input type="text" id="scrutinizerName" class="input-field" required>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Scrutiny Deadline:</label>
+                        <input type="date" id="scrutinyDeadline" class="input-field" required>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button class="cancel-button" onclick="closeAssignScrutinizerModal()">Cancel</button>
+                        <button class="save-button" onclick="assignScrutinizer('${paperId}')">Assign</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        } catch (error) {
+            console.error('Error showing assign scrutinizer modal:', error);
+            alert('Failed to load question paper details. Please try again.');
+        }
+      }
+
+      function closeAssignScrutinizerModal() {
+        const modal = document.getElementById('assign-scrutinizer-modal');
+        if (modal) {
+            modal.remove();
+        }
+      }
+
+      async function assignScrutinizer(paperId) {
+        try {
+            const sessionValid = await checkSession();
+            if (!sessionValid) {
+                alert('Session expired. Please log in again.');
+                window.location.href = '/index.html';
+                return;
+            }
+
+            const scrutinizerId = document.getElementById('scrutinizerId').value.trim();
+            const scrutinizerName = document.getElementById('scrutinizerName').value.trim();
+            const scrutinyDeadline = document.getElementById('scrutinyDeadline').value;
+            
+            // Get exam date from modal dataset
+            const modal = document.getElementById('assign-scrutinizer-modal');
+            const examDate = modal ? modal.dataset.examDate : null;
+
+            if (!scrutinizerId) {
+                alert('Please select a scrutinizer');
+                return;
+            }
+
+            if (!scrutinizerName) {
+                alert('Please enter scrutinizer name');
+                return;
+            }
+
+            if (!scrutinyDeadline) {
+                alert('Please set a deadline for scrutiny');
+                return;
+            }
+
+            if (!examDate) {
+                alert('Exam date not found. Please try again.');
+                return;
+            }
+
+            // Convert dates to Date objects for comparison
+            const deadlineDate = new Date(scrutinyDeadline);
+            const examDateObj = new Date(examDate);
+
+            // Check if deadline is before exam date
+            if (deadlineDate >= examDateObj) {
+                const errorMessage = `Error: Scrutiny deadline (${deadlineDate.toLocaleDateString()}) must be before the exam date (${examDateObj.toLocaleDateString()}). Please select an earlier date for scrutiny deadline.`;
+                alert(errorMessage);
+                return;
+            }
+
+            const response = await fetch(`/api/questionpaper/${paperId}/assign-scrutinizer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    scrutinizerId,
+                    scrutinizerName,
+                    scrutinyDeadline: new Date(scrutinyDeadline)
+                })
+            });
+
+            if (response.status === 401) {
+                alert('Session expired. Please log in again.');
+                window.location.href = '/index.html';
+                return;
+            }
+
+            if (response.status === 403) {
+                alert('You are not authorized to assign scrutinizers.');
+                return;
+            }
+
+            if (response.status === 404) {
+                alert('Question paper not found.');
+                return;
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to assign scrutinizer');
+            }
+
+            alert('Scrutinizer assigned successfully!');
+            closeAssignScrutinizerModal();
+            await loadQuestionPapers();
+        } catch (error) {
+            console.error('Error assigning scrutinizer:', error);
+            alert(`Failed to assign scrutinizer: ${error.message}`);
+        }
+      }
+
+      async function viewScrutiny(paperId) {
+        try {
+            const response = await fetch(`/api/questionpaper/${paperId}`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch scrutiny details');
+            }
+
+            const paper = await response.json();
+            
+            // Create modal container
+            const modal = document.createElement('div');
+            modal.id = 'scrutiny-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                width: 600px;
+                max-height: 80vh;
+                overflow-y: auto;
+                position: relative;
+            `;
+
+            // Create exit button
+            const exitButton = document.createElement('button');
+            exitButton.textContent = 'Exit';
+            exitButton.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            `;
+            exitButton.onclick = function() {
+                modal.remove();
+            };
+
+            // Add content to modal
+            modalContent.innerHTML = `
+                <h3 style="margin-right: 30px;">Scrutiny Details</h3>
+                <div style="margin-bottom: 15px;">
+                    <p><strong>Scrutinizer:</strong> ${paper.scrutinizerName} (${paper.scrutinizerId})</p>
+                    <p><strong>Status:</strong> ${paper.scrutinyStatus}</p>
+                    <p><strong>Remarks:</strong></p>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        ${paper.scrutinyRemarks}
+                    </div>
+                </div>
+            `;
+
+            // Assemble modal
+            modalContent.appendChild(exitButton);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+        } catch (error) {
+            console.error('Error viewing scrutiny:', error);
+            alert('Failed to load scrutiny details. Please try again.');
+        }
+      }
+
+      async function downloadPaper(paperId) {
+        try {
+            const response = await fetch(`/api/questionpaper/${paperId}/download`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download paper');
+            }
+
+            // Get the content type from the response
+            const contentType = response.headers.get('content-type');
+            
+            // Create a blob from the response
+            const blob = await response.blob();
+            
+            // Create a URL for the blob
+            const url = window.URL.createObjectURL(blob);
+            
+            // Create a temporary link element
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // Set the filename based on content type
+            if (contentType.includes('pdf')) {
+                a.download = `question_paper_${paperId}.pdf`;
+            } else if (contentType.includes('html')) {
+                a.download = `question_paper_${paperId}.html`;
+            } else {
+                a.download = `question_paper_${paperId}`;
+            }
+            
+            // Append to body, click, and remove
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Error downloading paper:', error);
+            alert('Failed to download paper. Please try again.');
+        }
+      }
+
+      async function logout() {
+        if (!confirm('Are you sure you want to logout?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Logout failed');
+            }
+            
+            window.location.href = '/index.html';
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('Error during logout. Please try again.');
+        }
+      }
+
+      async function redirectToSetQuestionPaper(facultyId, subjectCode) {
+        try {
+            const response = await fetch('/check-assignment-access', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to check assignment access');
+            }
+
+            const data = await response.json();
+            
+            if (data.accessGranted) {
+                window.location.href = `/set_question_paper.html?facultyId=${facultyId}&subjectCode=${subjectCode}`;
+            } else {
+                alert('You do not have permission to set question papers for this assignment.');
+            }
+        } catch (error) {
+            console.error('Error checking assignment access:', error);
+            alert('Error checking assignment access. Please try again.');
+        }
+      }
+
+      function showScrutinyDetails(paperId) {
+        const paper = questionPapers.find(p => p._id === paperId);
+        if (!paper) return;
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Scrutiny Details</h2>
+                    <button class="close-btn" onclick="closeScrutinyModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Scrutinizer:</strong> ${paper.scrutinizerName || 'Not assigned'}</p>
+                    <p><strong>Status:</strong> ${paper.scrutinyStatus || 'Pending'}</p>
+                    <p><strong>Remarks:</strong> ${paper.scrutinyRemarks || 'No remarks'}</p>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        modal.style.display = 'block';
+      }
+
+      function closeScrutinyModal() {
+        const modal = document.querySelector('.modal');
+        if (modal) {
+            modal.remove();
+        }
+      }
+
+      async function loadApprovals() {
+        try {
+          const response = await fetch('/api/questionpapers', {
+            credentials: 'include'
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch question papers');
+          }
+
+          const papers = await response.json();
+          const tableBody = document.getElementById('approval-table-body');
+          tableBody.innerHTML = '';
+
+          // Filter papers that have been approved by scrutiny
+          const approvedPapers = papers.filter(paper => 
+            paper.scrutinyStatus === 'approved'
+          );
+
+          if (approvedPapers.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No papers found</td></tr>';
+            return;
+          }
+
+          approvedPapers.forEach((paper, index) => {
+            const row = document.createElement('tr');
+            const isApproved = paper.adminApproval === 'accepted';
+            const isRejected = paper.adminApproval === 'rejected';
+            // Get date of exam and session
+            const examDate = paper.examDate ? new Date(paper.examDate) : null;
+            const examDateStr = examDate ? examDate.toLocaleDateString() : 'N/A';
+            const session = paper.session || 'N/A';
+            // Print Question Paper: one day before exam date
+            let printDateStr = 'N/A';
+            if (examDate) {
+              const printDate = new Date(examDate);
+              printDate.setDate(printDate.getDate() - 1);
+              printDateStr = printDate.toLocaleDateString();
+            }
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${examDateStr}</td>
+              <td>${session}</td>
+              <td>${paper.year || 'N/A'}</td>
+              <td>${paper.semester || 'N/A'}</td>
+              <td>${paper.subjectCode}</td>
+              <td>${paper.subjectTitle}</td>
+              <td>${printDateStr}</td>
+              <td>
+                <button class="view-btn" onclick="viewQuestionPaper('${paper._id}')">View Paper</button>
+              </td>
+              <td class="approval-actions">
+                ${isApproved ? 
+                  '<span class="approval-label-approved">Approved</span>' :
+                  isRejected ?
+                  '<span class="approval-label-rejected">Rejected</span>' :
+                  `<button class="approve-btn" onclick="handleAdminApproval('${paper._id}', 'accepted')">Approve</button>
+                   <button class="reject-btn" onclick="handleAdminApproval('${paper._id}', 'rejected')">Reject</button>`
+                }
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+        } catch (error) {
+          console.error('Error loading approvals:', error);
+          const tableBody = document.getElementById('approval-table-body');
+          tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: red;">Failed to load papers. Please try again later.</td></tr>';
+        }
+      }
+
+      async function viewQuestionPaper(paperId) {
+        try {
+          const response = await fetch(`/api/questionpaper/${paperId}`, {
+            credentials: 'include'
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch question paper');
+          }
+
+          const paper = await response.json();
+          
+          // Create modal for viewing the paper
+          const modal = document.createElement('div');
+          modal.className = 'modal';
+          modal.style.cssText = `
+            display: block;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+          `;
+
+          modal.innerHTML = `
+            <div class="modal-content" style="
+              background-color: #fefefe;
+              margin: 2% auto;
+              padding: 20px;
+              border: 1px solid #888;
+              width: 80%;
+              max-width: 800px;
+              border-radius: 8px;
+              position: relative;
+              max-height: 90vh;
+              overflow-y: auto;
+            ">
+              <div class="modal-header" style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #eee;
+              ">
+                <h2 style="margin: 0; color: #0f83ff;">Question Paper - ${paper.subjectCode}</h2>
+                <button class="close-btn" onclick="closeModal()" style="
+                  background: none;
+                  border: none;
+                  font-size: 24px;
+                  cursor: pointer;
+                  color: #666;
+                ">&times;</button>
+              </div>
+              <div class="modal-body" style="padding: 10px 0;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                  <h2 style="margin: 0; color: #333;">${paper.examName || 'Examination'}</h2>
+                  <p style="margin: 5px 0;"><strong>Department:</strong> ${paper.department || 'N/A'}</p>
+                  <p style="margin: 5px 0;"><strong>Semester:</strong> ${paper.semester || 'N/A'}</p>
+                  <p style="margin: 5px 0;"><strong>Subject Code:</strong> ${paper.subjectCode}</p>
+                  <p style="margin: 5px 0;"><strong>Subject Title:</strong> ${paper.subjectTitle}</p>
+                  <p style="margin: 5px 0;"><strong>Regulation:</strong> ${paper.regulation || 'N/A'}</p>
+                  <p style="margin: 5px 0;"><strong>Time:</strong> ${paper.time || 'N/A'}</p>
+                  <p style="margin: 5px 0;"><strong>Maximum Marks:</strong> ${paper.maxMarks || 'N/A'}</p>
+                </div>
+                <div style="border-top: 2px solid #333; margin: 20px 0;"></div>
+                <div class="paper-content" style="padding: 15px;">
+                  <h3 style="color: #0f83ff; margin-top: 20px; margin-bottom: 10px; text-align: center;">Part A (10 x 2 = 20 Marks)</h3>
+                  <div style="white-space: normal; line-height: 1.5; background: #fff; padding: 15px; border-radius: 4px; border: 1px solid #eee; text-align: left;">
+                    ${paper.partAQuestions ? paper.partAQuestions.map((q, i) => `<div>${i + 1}. ${q}</div>`).join('') : 'No questions'}
+                  </div>
+                  <h3 style="color: #0f83ff; margin-top: 20px; margin-bottom: 10px; text-align: center;">Part B (8 x 8 = 64 Marks)</h3>
+                  <div style="white-space: normal; line-height: 1.5; background: #fff; padding: 15px; border-radius: 4px; border: 1px solid #eee; text-align: left;">
+                    ${paper.partBQuestions ? paper.partBQuestions.map((q, i) => `<div>${i + 11}. ${q}</div>`).join('') : 'No questions'}
+                  </div>
+                  <h3 style="color: #0f83ff; margin-top: 20px; margin-bottom: 10px; text-align: center;">Part C (2 x 8 = 16 Marks)</h3>
+                  <div style="white-space: normal; line-height: 1.5; background: #fff; padding: 15px; border-radius: 4px; border: 1px solid #eee; text-align: left;">
+                    ${paper.partCQuestions ? paper.partCQuestions.map((q, i) => `<div>${i + 23}. ${q}</div>`).join('') : 'No questions'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+        } catch (error) {
+          console.error('Error viewing question paper:', error);
+          alert('Failed to load question paper. Please try again.');
+        }
+      }
+
+      async function handleAdminApproval(paperId, action) {
+        if (!confirm(`Are you sure you want to ${action} this question paper?`)) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/questionpaper/${paperId}/approval`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ action })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to process approval');
+          }
+
+          const result = await response.json();
+          
+          if (result.success) {
+            // Update the UI immediately
+            const approvalCell = document.querySelector(`button[onclick*="${paperId}"]`).closest('.approval-actions');
+            if (approvalCell) {
+              if (action === 'accepted') {
+                approvalCell.innerHTML = '<span class="approval-label-approved">Approved</span>';
+              } else if (action === 'rejected') {
+                approvalCell.innerHTML = '<span class="approval-label-rejected">Rejected</span>';
+              }
+            }
+            alert(`Question paper ${action} successfully`);
+          } else {
+            throw new Error(result.message || 'Failed to process approval');
+          }
+        } catch (error) {
+          console.error('Error processing approval:', error);
+          alert('Failed to process approval. Please try again later.');
+        }
+      }
+
+      function closeModal() {
+        const modal = document.querySelector('.modal');
+        if (modal) {
+          modal.remove();
+        }
+      }
+    </script>
+  </body>
+</html>
